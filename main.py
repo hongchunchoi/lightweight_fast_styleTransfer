@@ -3,11 +3,16 @@ import torch
 import torchvision.transforms as transforms
 from models.vgg import *
 from models.transformer import  *
+import torchvision.datasets as datasets
+from utils import *
 
 random_seed = 1994
+batch_size = 128
+device = ""
 
 np.random.seed(random_seed)
 torch.manual_seed(random_seed)
+initial_lr = 0.1
 
 transform = transforms.Compose([
     transforms.Resize(256),
@@ -22,8 +27,7 @@ style_transform = transforms.Compose([
 ])
 
 
-
-train_dataset = datasets.ImageFolder("/content/gdrive/My Drive/Colab_Notebooks/data/COCO", transform)
+train_dataset = datasets.ImageFolder("C:/Users/Hongjun/Desktop/dataset/coco", transform)
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size)
 
 transformer = TransformerNet()
@@ -32,7 +36,8 @@ vgg = VGG16(requires_grad=False).to(device)
 optimizer = torch.optim.Adam(transformer.parameters(), initial_lr)
 mse_loss = nn.MSELoss()
 
-style = load_image(filename=style_image_location, size=None, scale=None)
+style = load_image(filename="./styleImage/", size=None, scale=None)
+
 style = style_transform(style)
 style = style.repeat(batch_size, 1, 1, 1).to(device)
 
